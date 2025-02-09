@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: conexa-gym-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: conexa_gym
+      MYSQL_USER: conexa_user
+      MYSQL_PASSWORD: conexa_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build: ../backend
+    container_name: conexa-gym-backend
+    volumes:
+      - ../backend:/var/www/html
+    ports:
+      - "8000:80"
+    depends_on:
+      - mysql
+    environment:
+      - DB_DSN=mysql:host=mysql;dbname=conexa_gym
+      - DB_USERNAME=conexa_user
+      - DB_PASSWORD=conexa_pass
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: conexa-gym-phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+
+  frontend:
+    build: ../frontend
+    container_name: conexa-gym-frontend
+    volumes:
+      - ../frontend:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+      
+volumes:
+  mysql_data:

@@ -1,0 +1,16 @@
+# Node.js (Frontend)
+node_modules/
+dist/
+
+# PHP/Yii (Backend)
+vendor/
+runtime/
+web/assets/
+
+# Docker
+.env
+docker-compose.override.yml
+
+# IDEs
+.idea/
+.vscode/
