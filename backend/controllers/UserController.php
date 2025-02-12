@@ -23,6 +23,28 @@ class UserController extends Controller
         return $behaviors;
     }
 
+    public function beforeAction($action)
+    {
+        if (Yii::$app->request->isOptions) {
+            Yii::$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
+            Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
+            Yii::$app->end();
+        }
+        return parent::beforeAction($action);
+    }
+
+    public function actionOptions($id = null)
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        Yii::$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
+        Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+        Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'content-type, authorization, x-requested-with');
+        Yii::$app->response->headers->set('Access-Control-Allow-Credentials', 'true');
+        Yii::$app->response->statusCode = 200;
+        return 'OK';
+    }
+
     public function actionLogin()
     {
         Yii::$app->response->format = Response::FORMAT_JSON;
