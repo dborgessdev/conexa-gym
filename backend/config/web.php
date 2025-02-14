@@ -23,15 +23,6 @@ $config = [
                 'application/json' => 'yii\web\JsonParser',
             ]
         ],
-        'as corsFilter' => [
-            'class' => \yii\filters\Cors::class,
-            'cors' => [
-                'Origin'                            => ['http://localhost:5173'],
-                'Access-Control-Request-Method'     => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-                'Access-Control-Allow-Credentials'  => true,
-                'Access-Control-Allow-Headers'      => ['Content-Type', 'Authorization', 'X-Requested-With'],
-            ],
-        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
@@ -45,7 +36,6 @@ $config = [
         'mailer' => [
             'class'             => \yii\symfonymailer\Mailer::class,
             'viewPath'          => '@app/mail',
-            // send all mails to a file by default.
             'useFileTransport'  => true,
         ],
         'log' => [
@@ -58,32 +48,32 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
-        'urlManager' => [
-            'enablePrettyUrl' => true,
-            'showScriptName' => false,
-            'rules' => [
+        
+        // Configuração do CORS de forma correta
+        'cors' => [
+            'class' => \yii\filters\Cors::class,
+            'cors' => [
+                'Origin' => ['*'], // Permitir todas as origens
+                'Access-Control-Allow-Methods' => ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+                'Access-Control-Allow-Headers' => ['Content-Type', 'Authorization', 'X-Requested-With'],
+                'Access-Control-Allow-Credentials' => true,
             ],
         ],
-        */
     ],
+    
     'params' => $params,
 ];
 
 if (YII_ENV_DEV) {
-    // configuration adjustments for 'dev' environment
+    // Configuração extra para ambiente de desenvolvimento
     $config['bootstrap'][] = 'debug';
     $config['modules']['debug'] = [
         'class' => 'yii\debug\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 
     $config['bootstrap'][] = 'gii';
     $config['modules']['gii'] = [
         'class' => 'yii\gii\Module',
-        // uncomment the following to add your IP if you are not connecting from localhost.
-        //'allowedIPs' => ['127.0.0.1', '::1'],
     ];
 }
 
