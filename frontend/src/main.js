@@ -1,11 +1,16 @@
 import { createApp } from "vue";
-import router from "./router";
 import App from "./App.vue";
+import router from "./router";
 import axios from "axios";
+import { createVuetify } from "vuetify";
+import "vuetify/styles"; // Importando estilos padrão do Vuetify
+
+const vuetify = createVuetify(); // Criando a instância do Vuetify
 
 const app = createApp(App);
 
-app.use(router); // O router deve ser usado antes da montagem da aplicação
+app.use(router); 
+app.use(vuetify); // Registrando o Vuetify na aplicação
 app.mount("#app");
 
 // Teste de conexão com o backend
