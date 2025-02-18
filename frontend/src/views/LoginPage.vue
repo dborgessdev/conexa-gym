@@ -31,6 +31,7 @@ export default {
 
         if (response.data.success) {
           localStorage.setItem("user", JSON.stringify(response.data.user));
+          localStorage.setItem("token", response.data.user.token); // Salva o token corretamente
           this.$router.push("/home"); // Redireciona para home
         } else {
           this.errorMessage = response.data.message;
