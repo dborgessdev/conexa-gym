@@ -94,4 +94,12 @@ class UserController extends Controller
         }
     }
 
+    public function actionAlunos() {
+        return User::find()->where(['role' => 'aluno'])->all();
+    }
+    
+    public function actionProfessores() {
+        return User::find()->where(['role' => 'professor'])->all();
+    }    
+
 }

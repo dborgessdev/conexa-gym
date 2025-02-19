@@ -8,19 +8,28 @@ import PerfilAdmin from "../views/PerfilAdmin.vue";
 import PerfilProfessor from "../views/PerfilProfessor.vue";
 import PerfilAluno from "../views/PerfilAluno.vue";
 import PerfilUsuario from "../views/PerfilUsuario.vue";
+import GerenciarAdmin from "../views/GerenciarAdmin.vue";
 
 
 const routes = [
+  //rotas básicas
   { path: "/", redirect: "/login" }, 
   { path: "/login", component: LoginPage },
   { path: "/home", component: Home, meta: { requiresAuth: true } },
   { path: "/perfil", component: PerfilUsuario, meta: { requiresAuth: true, role: "perfil" } },
-  { path: "/admin/home", component: HomeAdmin, meta: { requiresAuth: true, role: "admin" } },
-  { path: "/professor/home", component: HomeProfessor, meta: { requiresAuth: true, role: "professor" } },
-  { path: "/aluno/home", component: HomeAluno, meta: { requiresAuth: true, role: "aluno" } },
+  //rotas admin
   { path: "/admin/perfil", component: PerfilAdmin, meta: { requiresAuth: true, role: "admin" } },
+  { path: "/admin/gerenciar", component: GerenciarAdmin, meta: { requiresAuth: true, role: "admin" } },
+  { path: "/admin/home", component: HomeAdmin, meta: { requiresAuth: true, role: "admin" } },
+
+  //rotas professor
+  { path: "/professor/home", component: HomeProfessor, meta: { requiresAuth: true, role: "professor" } },
   { path: "/professor/perfil", component: PerfilProfessor, meta: { requiresAuth: true, role: "professor" } },
+
+  //rotas aluno
   { path: "/aluno/perfil", component: PerfilAluno, meta: { requiresAuth: true, role: "aluno" } },
+  { path: "/aluno/home", component: HomeAluno, meta: { requiresAuth: true, role: "aluno" } },
+
 ];
 
 const router = createRouter({
