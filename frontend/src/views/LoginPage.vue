@@ -30,8 +30,13 @@ export default {
         });
 
         if (response.data.success) {
+          // Verifica se o backend está retornando todos os dados necessários
+          console.log("Dados recebidos do backend:", response.data.user);
+
+          // Salva no localStorage corretamente
           localStorage.setItem("user", JSON.stringify(response.data.user));
           localStorage.setItem("token", response.data.user.token); // Salva o token corretamente
+          
           this.$router.push("/home"); // Redireciona para home
         } else {
           this.errorMessage = response.data.message;

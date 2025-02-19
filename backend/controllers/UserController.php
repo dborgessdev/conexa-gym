@@ -69,7 +69,8 @@ class UserController extends Controller
                 'id'       => $user->id,
                 'username' => $user->username,
                 'role'     => $user->role,
-                'token'    => $user->auth_key, // Retorna o token de autenticação
+                'email' => $user->email, 
+                'token'    => $user->auth_key
             ],
         ];
     }
