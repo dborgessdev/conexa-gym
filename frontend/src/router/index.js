@@ -9,6 +9,9 @@ import PerfilProfessor from "../views/PerfilProfessor.vue";
 import PerfilAluno from "../views/PerfilAluno.vue";
 import PerfilUsuario from "../views/PerfilUsuario.vue";
 import GerenciarAdmin from "../views/GerenciarAdmin.vue";
+import CadastroAluno from "../views/CadastroAluno.vue";
+import CadastroProfessor from "../views/CadastroProfessor.vue";
+
 
 
 const routes = [
@@ -21,7 +24,8 @@ const routes = [
   { path: "/admin/perfil", component: PerfilAdmin, meta: { requiresAuth: true, role: "admin" } },
   { path: "/admin/gerenciar", component: GerenciarAdmin, meta: { requiresAuth: true, role: "admin" } },
   { path: "/admin/home", component: HomeAdmin, meta: { requiresAuth: true, role: "admin" } },
-
+  { path: "/admin/cadastro-aluno", component: CadastroAluno, meta: { requiresAuth: true, role: "admin" } },
+  { path: "/admin/cadastro-professor", component: CadastroProfessor, meta: { requiresAuth: true, role: "admin" } },
   //rotas professor
   { path: "/professor/home", component: HomeProfessor, meta: { requiresAuth: true, role: "professor" } },
   { path: "/professor/perfil", component: PerfilProfessor, meta: { requiresAuth: true, role: "professor" } },

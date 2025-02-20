@@ -80,18 +80,58 @@ class UserController extends Controller
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
     
         $request = Yii::$app->request->post();
+        $transaction = Yii::$app->db->beginTransaction(); // Inicia a transação
     
-        $user                = new User();
-        $user->username      = $request['username'];
-        $user->email         = $request['email'];
-        $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']); // Hash correto
-        $user->role          = $request['role'];
+        try {
+            // Criar novo usuário
+            $user = new User();
+            $user->username      = $request['username'];
+            $user->email         = $request['email'];
+            $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']); 
+            $user->role          = $request['role'];
     
-        if ($user->save()) {
+            if (!$user->save()) {
+                return ['success' => false, 'message' => 'Erro ao criar usuário', 'errors' => $user->errors];
+            }
+    
+            // Se for aluno, adicionar na tabela students
+            if ($request['role'] === 'aluno') {
+                $student = new Students();
+                $student->user_id = $user->id;
+                $student->age     = $request['age'] ?? null;
+                $student->weight  = $request['weight'] ?? null;
+                $student->height  = $request['height'] ?? null;
+    
+                if (!$student->save()) {
+                    $transaction->rollBack(); // Desfaz tudo se der erro
+                    return ['success' => false, 'message' => 'Erro ao salvar aluno', 'errors' => $student->errors];
+                }
+            }
+    
+            // Se for professor, adicionar na tabela teachers
+            if ($request['role'] === 'professor') {
+                $teacher = new Teachers();
+                $teacher->user_id    = $user->id;
+                $teacher->specialty  = $request['specialty'] ?? null;
+                $teacher->experience = $request['experience'] ?? null;
+    
+                if (!$teacher->save()) {
+                    $transaction->rollBack(); // Desfaz tudo se der erro
+                    return ['success' => false, 'message' => 'Erro ao salvar professor', 'errors' => $teacher->errors];
+                }
+            }
+    
+            $transaction->commit(); // Confirma as operações no banco
             return ['success' => true, 'message' => 'Usuário criado com sucesso!'];
-        } else {
-            return ['success' => false, 'message' => 'Erro ao criar usuário', 'errors' => $user->errors];
+    
+        } catch (\Exception $e) {
+            $transaction->rollBack(); // Desfaz alterações em caso de erro
+            return ['success' => false, 'message' => 'Erro inesperado', 'error' => $e->getMessage()];
         }
+    }
+
+    public function actionCreateAluno() {
+        return $this->actionCreateUser(); // Apenas chama o método genérico de criação
     }
 
     public function actionAlunos() {

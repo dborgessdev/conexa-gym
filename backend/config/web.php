@@ -59,6 +59,17 @@ $config = [
                 'Access-Control-Allow-Credentials' => true,
             ],
         ],
+
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'api/users/create-user' => 'user/create-user', // Define a rota para criação de usuários
+                'api/users/create-aluno' => 'user/create-aluno', // Opcional: caso queira um endpoint específico
+                'api/users/alunos' => 'user/alunos',
+                'api/users/professores' => 'user/professores',
+            ],
+        ],
     ],
     
     'params' => $params,
