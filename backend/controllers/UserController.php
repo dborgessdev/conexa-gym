@@ -81,18 +81,34 @@ class UserController extends Controller
     
         $request = Yii::$app->request->post();
     
-        $user                = new User();
-        $user->username      = $request['username'];
-        $user->email         = $request['email'];
-        $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']); // Hash correto
-        $user->role          = $request['role'];
+        $user = new User();
+        $user->username = $request['username'];
+        $user->email = $request['email'];
+        $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']);
+        $user->role = $request['role'];
     
         if ($user->save()) {
+            if ($user->role === 'aluno') {
+                Yii::$app->db->createCommand()->insert('students', [
+                    'user_id' => $user->id,
+                    'age' => $request['age'] ?? null,
+                    'weight' => $request['weight'] ?? null,
+                    'height' => $request['height'] ?? null,
+                ])->execute();
+            } elseif ($user->role === 'professor') {
+                Yii::$app->db->createCommand()->insert('teachers', [
+                    'user_id' => $user->id,
+                    'specialty' => $request['specialty'] ?? null,
+                    'experience' => $request['experience'] ?? null,
+                ])->execute();
+            }
+    
             return ['success' => true, 'message' => 'Usuário criado com sucesso!'];
         } else {
             return ['success' => false, 'message' => 'Erro ao criar usuário', 'errors' => $user->errors];
         }
     }
+    
 
     public function actionAlunos() {
         return User::find()->where(['role' => 'aluno'])->all();
