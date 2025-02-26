@@ -16,7 +16,7 @@ class UserController extends Controller
             'class' => \yii\filters\Cors::class,
             'cors' => [
                 'Origin' => ['http://localhost:5173'],
-                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS'],
+                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS', 'PUT'],
                 'Access-Control-Allow-Credentials' => true,
             ],
         ];
@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         if (Yii::$app->request->isOptions) {
             Yii::$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
-            Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
             Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
             Yii::$app->end();
         }
@@ -106,6 +106,48 @@ class UserController extends Controller
             return ['success' => true, 'message' => 'Usuário criado com sucesso!'];
         } else {
             return ['success' => false, 'message' => 'Erro ao criar usuário', 'errors' => $user->errors];
+        }
+    }
+
+    public function actionUpdateUser($id) {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        $request = Yii::$app->request->post();
+        $user = User::findOne($id);
+    
+        if (!$user) {
+            return ['success' => false, 'message' => 'Usuário não encontrado.'];
+        }
+    
+        $user->username = $request['username'] ?? $user->username;
+        $user->email = $request['email'] ?? $user->email;
+        if (!empty($request['password'])) {
+            $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']);
+        }
+    
+        if ($user->role === 'aluno') {
+            $aluno = Yii::$app->db->createCommand("SELECT * FROM students WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
+            if ($aluno) {
+                Yii::$app->db->createCommand()->update('students', [
+                    'age' => $request['age'] ?? $aluno['age'],
+                    'weight' => $request['weight'] ?? $aluno['weight'],
+                    'height' => $request['height'] ?? $aluno['height'],
+                ], ['user_id' => $user->id])->execute();
+            }
+        } elseif ($user->role === 'professor') {
+            $professor = Yii::$app->db->createCommand("SELECT * FROM teachers WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
+            if ($professor) {
+                Yii::$app->db->createCommand()->update('teachers', [
+                    'specialty' => $request['specialty'] ?? $professor['specialty'],
+                    'experience' => $request['experience'] ?? $professor['experience'],
+                ], ['user_id' => $user->id])->execute();
+            }
+        }
+    
+        if ($user->save()) {
+            return ['success' => true, 'message' => 'Usuário atualizado com sucesso!'];
+        } else {
+            return ['success' => false, 'message' => 'Erro ao atualizar usuário', 'errors' => $user->errors];
         }
     }
     

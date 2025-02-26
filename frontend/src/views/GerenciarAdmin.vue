@@ -10,6 +10,7 @@
           <v-list>
             <v-list-item v-for="aluno in alunos" :key="aluno.id">
               {{ aluno.username }} - {{ aluno.age }} anos
+              <v-btn @click="editarAluno(aluno)">Editar</v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -23,6 +24,7 @@
           <v-list>
             <v-list-item v-for="professor in professores" :key="professor.id">
               {{ professor.username }} - {{ professor.specialty }}
+              <v-btn @click="editarProfessor(professor)">Editar</v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -67,6 +69,43 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Modal para editar Aluno -->
+    <v-dialog v-model="dialogEditarAluno" max-width="400px">
+      <v-card>
+        <v-card-title>Editar Aluno</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="alunoEditando.username" label="Nome"></v-text-field>
+          <v-text-field v-model="alunoEditando.email" label="Email"></v-text-field>
+          <v-text-field v-model="alunoEditando.password" label="Senha" type="password"></v-text-field>
+          <v-text-field v-model="alunoEditando.age" label="Idade" type="number"></v-text-field>
+          <v-text-field v-model="alunoEditando.weight" label="Peso (kg)" type="number"></v-text-field>
+          <v-text-field v-model="alunoEditando.height" label="Altura (m)" type="number"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="dialogEditarAluno = false">Cancelar</v-btn>
+          <v-btn color="primary" @click="salvarEdicaoAluno">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Modal para editar Professor -->
+    <v-dialog v-model="dialogEditarProfessor" max-width="400px">
+      <v-card>
+        <v-card-title>Editar Professor</v-card-title>
+        <v-card-text>
+          <v-text-field v-model="professorEditando.username" label="Nome"></v-text-field>
+          <v-text-field v-model="professorEditando.email" label="Email"></v-text-field>
+          <v-text-field v-model="professorEditando.password" label="Senha" type="password"></v-text-field>
+          <v-text-field v-model="professorEditando.specialty" label="Especialidade"></v-text-field>
+          <v-text-field v-model="professorEditando.experience" label="Experiência (anos)" type="number"></v-text-field>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn @click="dialogEditarProfessor = false">Cancelar</v-btn>
+          <v-btn color="primary" @click="salvarEdicaoProfessor">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -80,6 +119,8 @@ export default {
       professores: [],
       dialogAluno: false,
       dialogProfessor: false,
+      dialogEditarAluno: false,
+      dialogEditarProfessor: false,
       novoAluno: {
         username: "",
         email: "",
@@ -92,6 +133,21 @@ export default {
         username: "",
         email: "",
         password: "",
+        specialty: "",
+        experience: "",
+      },
+      alunoEditando: {
+        id: null,
+        username: "",
+        email: "",
+        age: "",
+        weight: "",
+        height: "",
+      },
+      professorEditando: {
+        id: null,
+        username: "",
+        email: "",
         specialty: "",
         experience: "",
       },
@@ -161,6 +217,63 @@ export default {
         }
       } catch (error) {
         console.error("Erro ao cadastrar professor:", error);
+      }
+    },
+    editarAluno(aluno) {
+      this.alunoEditando = { ...aluno };
+      this.dialogEditarAluno = true;
+    },
+    editarProfessor(professor) {
+      this.professorEditando = { ...professor };
+      this.dialogEditarProfessor = true;
+    },
+    async salvarEdicaoAluno() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`http://localhost:8000/index.php?r=user/update-user&id=${this.alunoEditando.id}`, {
+          username: this.alunoEditando.username,
+          email: this.alunoEditando.email,
+          password: this.alunoEditando.password,
+          age: this.alunoEditando.age,
+          weight: this.alunoEditando.weight,
+          height: this.alunoEditando.height,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data.success) {
+          alert("Aluno atualizado com sucesso!");
+          this.dialogEditarAluno = false;
+          this.buscarUsuarios();
+        } else {
+          alert("Erro ao atualizar aluno: " + response.data.message);
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar aluno:", error);
+      }
+    },
+    async salvarEdicaoProfessor() {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.put(`http://localhost:8000/index.php?r=user/update-user&id=${this.professorEditando.id}`, {
+          username: this.professorEditando.username,
+          email: this.professorEditando.email,
+          password: this.professorEditando.password,
+          specialty: this.professorEditando.specialty,
+          experience: this.professorEditando.experience,
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (response.data.success) {
+          alert("Professor atualizado com sucesso!");
+          this.dialogEditarProfessor = false;
+          this.buscarUsuarios();
+        } else {
+          alert("Erro ao atualizar professor: " + response.data.message);
+        }
+      } catch (error) {
+        console.error("Erro ao atualizar professor:", error);
       }
     },
   },
