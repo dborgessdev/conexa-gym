@@ -13,3 +13,15 @@
     align-items: top;
     height: 100vh;
 }
+
+.btn-vermelho {
+    background-color: #FF5252; 
+    color: #fff;
+    margin-left: 8px; 
+}
+
+.btn-vermelho:hover {
+    background-color: #FF5252; 
+    color: #fff;
+    margin-left: 8px; 
+}

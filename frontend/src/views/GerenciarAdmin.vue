@@ -20,6 +20,9 @@
               <v-btn @click="editarAluno(aluno)" class="btn-amarelo">
                 <span class="material-symbols-outlined">edit</span> Editar
               </v-btn>
+              <v-btn @click="deletarUsuario(aluno.id)" class="btn-vermelho">
+                <span class="material-symbols-outlined">delete</span> Deletar
+              </v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -39,6 +42,9 @@
               {{ professor.username }} - {{ professor.specialty }}
               <v-btn @click="editarProfessor(professor)" class="btn-amarelo">
                 <span class="material-symbols-outlined">edit</span> Editar
+              </v-btn>
+              <v-btn @click="deletarUsuario(professor.id)" class="btn-vermelho">
+                <span class="material-symbols-outlined">delete</span> Deletar
               </v-btn>
             </v-list-item>
           </v-list>
@@ -315,6 +321,24 @@ export default {
         }
       } catch (error) {
         console.error("Erro ao atualizar professor:", error);
+      }
+    },
+
+    async deletarUsuario(id) {
+      if (!confirm("Tem certeza que deseja deletar este usuário?")) return;
+      try {
+        const token = localStorage.getItem("token");
+        const response = await axios.delete(`http://localhost:8000/index.php?r=user/delete-user&id=${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (response.data.success) {
+          alert("Usuário deletado com sucesso!");
+          this.buscarUsuarios();
+        } else {
+          alert("Erro ao deletar usuário: " + response.data.message);
+        }
+      } catch (error) {
+        console.error("Erro ao deletar usuário:", error);
       }
     },
   },

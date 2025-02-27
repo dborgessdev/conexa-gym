@@ -16,7 +16,7 @@ class UserController extends Controller
             'class' => \yii\filters\Cors::class,
             'cors' => [
                 'Origin' => ['http://localhost:5173'],
-                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS', 'PUT'],
+                'Access-Control-Request-Method' => ['GET', 'POST', 'OPTIONS', 'PUT, DELETE'],
                 'Access-Control-Allow-Credentials' => true,
             ],
         ];
@@ -27,7 +27,7 @@ class UserController extends Controller
     {
         if (Yii::$app->request->isOptions) {
             Yii::$app->response->headers->set('Access-Control-Allow-Origin', 'http://localhost:5173');
-            Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT');
+            Yii::$app->response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, DELETE');
             Yii::$app->response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
             Yii::$app->end();
         }
@@ -150,8 +150,31 @@ class UserController extends Controller
             return ['success' => false, 'message' => 'Erro ao atualizar usuário', 'errors' => $user->errors];
         }
     }
-    
 
+    public function actionDeleteUser($id) {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        $user = User::findOne($id);
+    
+        if (!$user) {
+            return ['success' => false, 'message' => 'Usuário não encontrado.'];
+        }
+    
+        // Deleta registros relacionados (aluno ou professor)
+        if ($user->role === 'aluno') {
+            Yii::$app->db->createCommand()->delete('students', ['user_id' => $user->id])->execute();
+        } elseif ($user->role === 'professor') {
+            Yii::$app->db->createCommand()->delete('teachers', ['user_id' => $user->id])->execute();
+        }
+    
+        // Deleta o usuário
+        if ($user->delete()) {
+            return ['success' => true, 'message' => 'Usuário deletado com sucesso!'];
+        } else {
+            return ['success' => false, 'message' => 'Erro ao deletar usuário.'];
+        }
+    }
+    
     public function actionAlunos() {
         return User::find()->where(['role' => 'aluno'])->all();
     }
