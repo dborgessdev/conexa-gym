@@ -9,7 +9,7 @@ import PerfilProfessor from "../views/PerfilProfessor.vue";
 import PerfilAluno from "../views/PerfilAluno.vue";
 import PerfilUsuario from "../views/PerfilUsuario.vue";
 import GerenciarAdmin from "../views/GerenciarAdmin.vue";
-
+import '../assets/styles.css';
 
 const routes = [
   //rotas básicas

@@ -1,0 +1,15 @@
+.btn-amarelo {
+    background-color: #ecbe25ec;
+    color: #000;
+}
+  
+.btn-amarelo:hover {
+    background-color: #eccb0d;
+}
+
+.v-container {
+    display: flex;
+    justify-content: start;
+    align-items: top;
+    height: 100vh;
+}

@@ -1,42 +1,61 @@
 <template>
   <v-container>
     <v-card>
-      <v-card-title>Gerenciar Usuários</v-card-title>
+      <v-card-title class="d-flex align-center justify-space-between">
+      <span>Gerenciar Usuários</span>
+      <v-btn color="primary" to="/home">
+        <span class="material-symbols-outlined">home</span> Home
+      </v-btn>
+    </v-card-title>
       <v-card-text>
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props">Alunos</v-btn>
+            <v-btn v-bind="props">
+              <span class="material-symbols-outlined">group</span> Alunos
+            </v-btn>
           </template>
           <v-list>
             <v-list-item v-for="aluno in alunos" :key="aluno.id">
               {{ aluno.username }} - {{ aluno.age }} anos
-              <v-btn @click="editarAluno(aluno)">Editar</v-btn>
+              <v-btn @click="editarAluno(aluno)" class="btn-amarelo">
+                <span class="material-symbols-outlined">edit</span> Editar
+              </v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
 
-        <v-btn color="primary" @click="dialogAluno = true">Adicionar Aluno</v-btn>
+        <v-btn color="primary" @click="dialogAluno = true">
+          <span class="material-symbols-outlined">person_add</span> Adicionar Aluno
+        </v-btn>
 
         <v-menu>
           <template v-slot:activator="{ props }">
-            <v-btn v-bind="props">Professores</v-btn>
+            <v-btn v-bind="props">
+              <span class="material-symbols-outlined">school</span> Professores
+            </v-btn>
           </template>
           <v-list>
             <v-list-item v-for="professor in professores" :key="professor.id">
               {{ professor.username }} - {{ professor.specialty }}
-              <v-btn @click="editarProfessor(professor)">Editar</v-btn>
+              <v-btn @click="editarProfessor(professor)" class="btn-amarelo">
+                <span class="material-symbols-outlined">edit</span> Editar
+              </v-btn>
             </v-list-item>
           </v-list>
         </v-menu>
 
-        <v-btn color="primary" @click="dialogProfessor = true">Adicionar Professor</v-btn>
+        <v-btn color="primary" @click="dialogProfessor = true">
+          <span class="material-symbols-outlined">person_add</span> Adicionar Professor
+        </v-btn>
       </v-card-text>
     </v-card>
 
     <!-- Modal para cadastrar Aluno -->
     <v-dialog v-model="dialogAluno" max-width="400px">
       <v-card>
-        <v-card-title>Cadastrar Aluno</v-card-title>
+        <v-card-title>
+          <span class="material-symbols-outlined">person_add</span> Cadastrar Aluno
+        </v-card-title>
         <v-card-text>
           <v-text-field v-model="novoAluno.username" label="Nome"></v-text-field>
           <v-text-field v-model="novoAluno.email" label="Email"></v-text-field>
@@ -46,8 +65,12 @@
           <v-text-field v-model="novoAluno.height" label="Altura (m)" type="number"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="dialogAluno = false">Cancelar</v-btn>
-          <v-btn color="primary" @click="cadastrarAluno">Salvar</v-btn>
+          <v-btn @click="dialogAluno = false">
+            <span class="material-symbols-outlined">cancel</span> Cancelar
+          </v-btn>
+          <v-btn color="primary" @click="cadastrarAluno">
+            <span class="material-symbols-outlined">save</span> Salvar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -55,7 +78,9 @@
     <!-- Modal para cadastrar Professor -->
     <v-dialog v-model="dialogProfessor" max-width="400px">
       <v-card>
-        <v-card-title>Cadastrar Professor</v-card-title>
+        <v-card-title>
+          <span class="material-symbols-outlined">person_add</span> Cadastrar Professor
+        </v-card-title>
         <v-card-text>
           <v-text-field v-model="novoProfessor.username" label="Nome"></v-text-field>
           <v-text-field v-model="novoProfessor.email" label="Email"></v-text-field>
@@ -64,8 +89,12 @@
           <v-text-field v-model="novoProfessor.experience" label="Experiência (anos)" type="number"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="dialogProfessor = false">Cancelar</v-btn>
-          <v-btn color="primary" @click="cadastrarProfessor">Salvar</v-btn>
+          <v-btn @click="dialogProfessor = false">
+            <span class="material-symbols-outlined">cancel</span> Cancelar
+          </v-btn>
+          <v-btn color="primary" @click="cadastrarProfessor">
+            <span class="material-symbols-outlined">save</span> Salvar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -73,7 +102,9 @@
     <!-- Modal para editar Aluno -->
     <v-dialog v-model="dialogEditarAluno" max-width="400px">
       <v-card>
-        <v-card-title>Editar Aluno</v-card-title>
+        <v-card-title>
+          <span class="material-symbols-outlined">edit</span> Editar Aluno
+        </v-card-title>
         <v-card-text>
           <v-text-field v-model="alunoEditando.username" label="Nome"></v-text-field>
           <v-text-field v-model="alunoEditando.email" label="Email"></v-text-field>
@@ -83,8 +114,12 @@
           <v-text-field v-model="alunoEditando.height" label="Altura (m)" type="number"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="dialogEditarAluno = false">Cancelar</v-btn>
-          <v-btn color="primary" @click="salvarEdicaoAluno">Salvar</v-btn>
+          <v-btn @click="dialogEditarAluno = false">
+            <span class="material-symbols-outlined">cancel</span> Cancelar
+          </v-btn>
+          <v-btn color="primary" @click="salvarEdicaoAluno">
+            <span class="material-symbols-outlined">save</span> Salvar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -92,7 +127,9 @@
     <!-- Modal para editar Professor -->
     <v-dialog v-model="dialogEditarProfessor" max-width="400px">
       <v-card>
-        <v-card-title>Editar Professor</v-card-title>
+        <v-card-title>
+          <span class="material-symbols-outlined">edit</span> Editar Professor
+        </v-card-title>
         <v-card-text>
           <v-text-field v-model="professorEditando.username" label="Nome"></v-text-field>
           <v-text-field v-model="professorEditando.email" label="Email"></v-text-field>
@@ -101,8 +138,12 @@
           <v-text-field v-model="professorEditando.experience" label="Experiência (anos)" type="number"></v-text-field>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="dialogEditarProfessor = false">Cancelar</v-btn>
-          <v-btn color="primary" @click="salvarEdicaoProfessor">Salvar</v-btn>
+          <v-btn @click="dialogEditarProfessor = false">
+            <span class="material-symbols-outlined">cancel</span> Cancelar
+          </v-btn>
+          <v-btn color="primary" @click="salvarEdicaoProfessor">
+            <span class="material-symbols-outlined">save</span> Salvar
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
