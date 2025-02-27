@@ -6,8 +6,8 @@
       <v-btn color="primary" to="/home">
         <span class="material-symbols-outlined">home</span> Home
       </v-btn>
-    </v-card-title>
-      <v-card-text>
+      </v-card-title>
+    <v-card-text>
         <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn v-bind="props">
