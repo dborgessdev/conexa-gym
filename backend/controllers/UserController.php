@@ -66,15 +66,40 @@ class UserController extends Controller
         return [
             'success' => true,
             'user' => [
-                'id'       => $user->id,
-                'username' => $user->username,
-                'role'     => $user->role,
-                'email' => $user->email, 
-                'token'    => $user->auth_key
+                'id'        => $user->id,
+                'username'  => $user->username,
+                'role'      => $user->role,
+                'email'     => $user->email, 
+                'token'     => $user->auth_key
             ],
         ];
     }
+
+    public function actionGetUser($id) {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+
+        $user = User::findOne($id);
+
+        if(!$user) {
+            return ['error' => 'Usuário não encontrado!'];
     
+        }
+
+        return [
+            'id'        => $user->id,
+            'username'  => $user->username,
+            'role'      => $user->role,
+            'status'    => $user->status
+        ];
+    }
+
+    public function actionGetUsers() {
+        Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    
+        $users = User::find()->select(['id', 'username', 'status', 'role'])->asArray()->all();
+    
+        return $users ?: [];
+    }
 
     public function actionCreateUser() {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
@@ -90,16 +115,16 @@ class UserController extends Controller
         if ($user->save()) {
             if ($user->role === 'aluno') {
                 Yii::$app->db->createCommand()->insert('students', [
-                    'user_id' => $user->id,
-                    'age' => $request['age'] ?? null,
-                    'weight' => $request['weight'] ?? null,
-                    'height' => $request['height'] ?? null,
+                    'user_id'   => $user->id,
+                    'age'       => $request['age'] ?? null,
+                    'weight'    => $request['weight'] ?? null,
+                    'height'    => $request['height'] ?? null,
                 ])->execute();
             } elseif ($user->role === 'professor') {
                 Yii::$app->db->createCommand()->insert('teachers', [
-                    'user_id' => $user->id,
-                    'specialty' => $request['specialty'] ?? null,
-                    'experience' => $request['experience'] ?? null,
+                    'user_id'       => $user->id,
+                    'specialty'     => $request['specialty'] ?? null,
+                    'experience'    => $request['experience'] ?? null,
                 ])->execute();
             }
     
@@ -129,18 +154,18 @@ class UserController extends Controller
             $aluno = Yii::$app->db->createCommand("SELECT * FROM students WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
             if ($aluno) {
                 Yii::$app->db->createCommand()->update('students', [
-                    'age' => $request['age'] ?? $aluno['age'],
-                    'weight' => $request['weight'] ?? $aluno['weight'],
-                    'height' => $request['height'] ?? $aluno['height'],
-                ], ['user_id' => $user->id])->execute();
+                    'age'       => $request['age'] ?? $aluno['age'],
+                    'weight'    => $request['weight'] ?? $aluno['weight'],
+                    'height'    => $request['height'] ?? $aluno['height'],
+                ], ['user_id'   => $user->id])->execute();
             }
         } elseif ($user->role === 'professor') {
             $professor = Yii::$app->db->createCommand("SELECT * FROM teachers WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
             if ($professor) {
                 Yii::$app->db->createCommand()->update('teachers', [
-                    'specialty' => $request['specialty'] ?? $professor['specialty'],
-                    'experience' => $request['experience'] ?? $professor['experience'],
-                ], ['user_id' => $user->id])->execute();
+                    'specialty'     => $request['specialty'] ?? $professor['specialty'],
+                    'experience'    => $request['experience'] ?? $professor['experience'],
+                ], ['user_id'       => $user->id])->execute();
             }
         }
     
@@ -160,14 +185,13 @@ class UserController extends Controller
             return ['success' => false, 'message' => 'Usuário não encontrado.'];
         }
     
-        // Deleta registros relacionados (aluno ou professor)
+        // alteração de fluxo para excluir os alunos ou os profs depende da role
         if ($user->role === 'aluno') {
             Yii::$app->db->createCommand()->delete('students', ['user_id' => $user->id])->execute();
         } elseif ($user->role === 'professor') {
             Yii::$app->db->createCommand()->delete('teachers', ['user_id' => $user->id])->execute();
         }
     
-        // Deleta o usuário
         if ($user->delete()) {
             return ['success' => true, 'message' => 'Usuário deletado com sucesso!'];
         } else {
