@@ -16,16 +16,9 @@ $config = [
             'format' => \yii\web\Response::FORMAT_JSON,
             'charset' => 'UTF-8',
         ],
-        'urlManager' => [
-            'enablePrettyUrl' => true, // Remove index.php das URLs
-            'showScriptName' => false,
-            'rules' => [
-                'GET user/get-users' => 'user/get-users', // Definindo a rota get.
-            ],
-        ],
         'request' => [
             'cookieValidationKey' => '39tJN3A-neU4n0sa9mvr9rEpj_Bh1ZgU',
-            'enableCsrfValidation' => false, // Desative para evitar problemas com CORS
+            'enableCsrfValidation' => false,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
             ]
