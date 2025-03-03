@@ -9,6 +9,7 @@ import PerfilProfessor from "../views/PerfilProfessor.vue";
 import PerfilAluno from "../views/PerfilAluno.vue";
 import PerfilUsuario from "../views/PerfilUsuario.vue";
 import GerenciarAdmin from "../views/GerenciarAdmin.vue";
+import DashboardAdmin from "../views/DashboardAdmin.vue";
 import '../assets/styles.css';
 
 const routes = [
@@ -21,6 +22,7 @@ const routes = [
   { path: "/admin/perfil", component: PerfilAdmin, meta: { requiresAuth: true, role: "admin" } },
   { path: "/admin/gerenciar", component: GerenciarAdmin, meta: { requiresAuth: true, role: "admin" } },
   { path: "/admin/home", component: HomeAdmin, meta: { requiresAuth: true, role: "admin" } },
+  { path: "/admin/dashboard", component: DashboardAdmin, meta: { requiresAuth: true, role: "admin" } },
 
   //rotas professor
   { path: "/professor/home", component: HomeProfessor, meta: { requiresAuth: true, role: "professor" } },

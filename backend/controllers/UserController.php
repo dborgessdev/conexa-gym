@@ -89,14 +89,15 @@ class UserController extends Controller
             'id'        => $user->id,
             'username'  => $user->username,
             'role'      => $user->role,
-            'status'    => $user->status
+            'status'    => $user->status,
+            'email'     => $user->email
         ];
     }
 
     public function actionGetUsers() {
         Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
     
-        $users = User::find()->select(['id', 'username', 'status', 'role'])->asArray()->all();
+        $users = User::find()->select(['id', 'username', 'status', 'role', 'email'])->asArray()->all();
     
         return $users ?: [];
     }
