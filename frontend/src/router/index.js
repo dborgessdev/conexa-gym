@@ -11,6 +11,7 @@ import PerfilUsuario from "../views/PerfilUsuario.vue";
 import GerenciarAdmin from "../views/GerenciarAdmin.vue";
 import DashboardAdmin from "../views/DashboardAdmin.vue";
 import '../assets/styles.css';
+import TreinosAluno from "../views/TreinosAluno.vue";
 
 const routes = [
   //rotas básicas
@@ -31,6 +32,7 @@ const routes = [
   //rotas aluno
   { path: "/aluno/perfil", component: PerfilAluno, meta: { requiresAuth: true, role: "aluno" } },
   { path: "/aluno/home", component: HomeAluno, meta: { requiresAuth: true, role: "aluno" } },
+  { path: "/aluno/treinos", component: TreinosAluno}
 
 ];
 
