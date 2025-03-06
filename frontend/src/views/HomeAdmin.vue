@@ -61,7 +61,7 @@ export default {
   align-items: center;
   height: 100vh;
   background: linear-gradient(to right, #eef2f3, #d9e2ec);
-  padding: 50px;
+  padding: 135px;
 }
 
 .shadow-card {

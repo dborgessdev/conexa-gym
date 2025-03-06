@@ -344,3 +344,46 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.v-container {
+  display: flex;
+  justify-content: center;
+  align-items: top;
+  height: 100vh;
+  background: linear-gradient(to right, #eef2f3, #d9e2ec);
+  padding: 135px;
+}
+
+.shadow-card {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 16px;
+  max-width: 900px;
+}
+
+.btn-hover {
+  transition: all 0.3s ease-in-out;
+  white-space: normal;
+}
+
+.btn-hover:hover {
+  transform: scale(1.08);
+  filter: brightness(1.2);
+}
+
+.btn-large {
+  font-size: 14px;
+  padding: 24px 70px;
+}
+
+.material-symbols-outlined {
+  font-size: 28px;
+  margin-right: 10px;
+}
+
+.text-wrap {
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+}
+</style>
