@@ -145,28 +145,42 @@ class UserController extends Controller
             return ['success' => false, 'message' => 'Usuário não encontrado.'];
         }
     
+        // Atualiza o status, se enviado na requisição
+        if (isset($request['status'])) {
+            if ($request['status'] == 1) {
+                // Se for liberado por 1 dia, salva a data de expiração
+                $user->status = 1;
+                $user->access_expiration = date('Y-m-d H:i:s', strtotime('+1 day'));
+            } else {
+                $user->status = 0;
+                $user->access_expiration = null; // Bloqueia indefinidamente
+            }
+        }
+    
+        // Atualiza os dados normais do usuário
         $user->username = $request['username'] ?? $user->username;
         $user->email = $request['email'] ?? $user->email;
         if (!empty($request['password'])) {
             $user->password_hash = Yii::$app->security->generatePasswordHash($request['password']);
         }
     
+        // Atualiza dados adicionais de alunos e professores
         if ($user->role === 'aluno') {
             $aluno = Yii::$app->db->createCommand("SELECT * FROM students WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
             if ($aluno) {
                 Yii::$app->db->createCommand()->update('students', [
-                    'age'       => $request['age'] ?? $aluno['age'],
-                    'weight'    => $request['weight'] ?? $aluno['weight'],
-                    'height'    => $request['height'] ?? $aluno['height'],
-                ], ['user_id'   => $user->id])->execute();
+                    'age'    => $request['age'] ?? $aluno['age'],
+                    'weight' => $request['weight'] ?? $aluno['weight'],
+                    'height' => $request['height'] ?? $aluno['height'],
+                ], ['user_id' => $user->id])->execute();
             }
         } elseif ($user->role === 'professor') {
             $professor = Yii::$app->db->createCommand("SELECT * FROM teachers WHERE user_id = :user_id", [':user_id' => $user->id])->queryOne();
             if ($professor) {
                 Yii::$app->db->createCommand()->update('teachers', [
-                    'specialty'     => $request['specialty'] ?? $professor['specialty'],
-                    'experience'    => $request['experience'] ?? $professor['experience'],
-                ], ['user_id'       => $user->id])->execute();
+                    'specialty'  => $request['specialty'] ?? $professor['specialty'],
+                    'experience' => $request['experience'] ?? $professor['experience'],
+                ], ['user_id' => $user->id])->execute();
             }
         }
     
