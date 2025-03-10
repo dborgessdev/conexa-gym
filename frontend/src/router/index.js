@@ -12,6 +12,7 @@ import GerenciarAdmin from "../views/GerenciarAdmin.vue";
 import DashboardAdmin from "../views/DashboardAdmin.vue";
 import '../assets/styles.css';
 import TreinosAluno from "../views/TreinosAluno.vue";
+import TreinosProfessor from "../views/TreinosProfessor.vue";
 
 const routes = [
   //rotas básicas
@@ -19,6 +20,7 @@ const routes = [
   { path: "/login", component: LoginPage },
   { path: "/home", component: Home, meta: { requiresAuth: true } },
   { path: "/perfil", component: PerfilUsuario, meta: { requiresAuth: true, role: "perfil" } },
+
   //rotas admin
   { path: "/admin/perfil", component: PerfilAdmin, meta: { requiresAuth: true, role: "admin" } },
   { path: "/admin/gerenciar", component: GerenciarAdmin, meta: { requiresAuth: true, role: "admin" } },
@@ -28,6 +30,7 @@ const routes = [
   //rotas professor
   { path: "/professor/home", component: HomeProfessor, meta: { requiresAuth: true, role: "professor" } },
   { path: "/professor/perfil", component: PerfilProfessor, meta: { requiresAuth: true, role: "professor" } },
+  { path: "/professor/treinos", component: TreinosProfessor},
 
   //rotas aluno
   { path: "/aluno/perfil", component: PerfilAluno, meta: { requiresAuth: true, role: "aluno" } },
