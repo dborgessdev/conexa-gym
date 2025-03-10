@@ -220,6 +220,32 @@ class UserController extends Controller
     
     public function actionProfessores() {
         return User::find()->where(['role' => 'professor'])->all();
-    }    
+    }
+    
+    public function actionTemporaryAccess()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
 
+        $request = Yii::$app->request;
+        $userId = $request->post('userId');
+
+        if (!$userId) {
+            return ['success' => false, 'message' => 'ID do usuário não fornecido'];
+        }
+
+        $user = User::findOne($userId);
+
+        if (!$user) {
+            return ['success' => false, 'message' => 'Usuário não encontrado'];
+        }
+
+        $user->status = 1; 
+        $user->access_expiration = date('Y-m-d H:i:s', strtotime('+1 day'));
+
+        if ($user->save()) {
+            return ['success' => true, 'message' => 'Acesso liberado por 1 dia'];
+        } else {
+            return ['success' => false, 'message' => 'Erro ao salvar no banco de dados'];
+        }
+    }
 }

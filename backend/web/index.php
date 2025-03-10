@@ -18,5 +18,9 @@ if ($requestUri === '/user/get-users') {
     $_GET['r'] = 'user/get-user';
 }
 
+if ($requestUri === '/user/temporary-access') {
+    $_GET['r'] = 'user/temporary-access';
+}
+
 // Inicializa o Yii
 (new yii\web\Application($config))->run();
