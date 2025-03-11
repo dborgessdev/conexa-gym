@@ -42,6 +42,21 @@
                 </v-col>
               </v-row>
             </v-col>
+
+            <v-col cols="12" class="mb-4">
+              <v-row>
+                <v-col cols="3" class="text-right">
+                  <v-icon :color="professor.status === 'liberado' ? 'green' : 'red'">verified</v-icon>
+                </v-col>
+                <v-col cols="9">
+                  <p><strong>Status:</strong> 
+                    <span :style="{ color: professor.status === 'liberado' ? 'green' : 'red' }">
+                      {{ professor.status }}
+                    </span>
+                  </p>
+                </v-col>
+              </v-row>
+            </v-col>
           </v-row>
 
           <v-divider></v-divider>
@@ -52,20 +67,93 @@
                 <v-icon left>home</v-icon> Home
               </v-btn>
             </v-col>
+            <v-col cols="12">
+              <v-btn block color="success" class="rounded-lg btn-hover" @click="modalPagamento = true">
+                <v-icon left>payment</v-icon> Pagar Mensalidade
+              </v-btn>
+            </v-col>
           </v-row>
         </v-card>
       </v-col>
     </v-row>
+
+    <v-dialog v-model="modalPagamento" max-width="500px">
+      <v-card>
+        <v-card-title class="text-h5">Pagamento da Mensalidade</v-card-title>
+        <v-divider></v-divider>
+        <v-card-text>
+          <p>Valor: R$ {{ valorMensalidade }}</p>
+          <v-select
+            v-model="formaPagamento"
+            :items="['Pix', 'Cartão de Crédito']"
+            label="Forma de Pagamento"
+          ></v-select>
+          <div v-if="formaPagamento === 'Pix'" class="text-center">
+            <p>Escaneie o QR Code para pagamento:</p>
+            <v-img src="/qrcode-fake.png" max-width="150" class="mx-auto"></v-img>
+          </div>
+          <div v-if="formaPagamento === 'Cartão de Crédito'">
+            <v-text-field label="Número do Cartão" v-model="cartao.numero"></v-text-field>
+            <v-text-field label="Validade" v-model="cartao.validade"></v-text-field>
+            <v-text-field label="CVV" v-model="cartao.cvv" type="password"></v-text-field>
+          </div>
+        </v-card-text>
+        <v-divider></v-divider>
+        <v-card-actions>
+          <v-btn color="red" text @click="modalPagamento = false">Cancelar</v-btn>
+          <v-btn color="green" @click="realizarPagamento">Pagar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   data() {
     return {
-      professor: JSON.parse(localStorage.getItem("user")) || {}
+      professor: JSON.parse(localStorage.getItem("user")) || { 
+        username: "", 
+        specialty: "", 
+        experience: 0, 
+        status: "bloqueado" 
+      },
+      modalPagamento: false,
+      formaPagamento: "",
+      cartao: {
+        numero: "",
+        validade: "",
+        cvv: ""
+      }
     };
   },
+  computed: {
+    valorMensalidade() {
+      return 50;
+    }
+  },
+  methods: {
+    async realizarPagamento() {
+      try {
+        const apiBaseUrl = "http://localhost:8000";
+        const response = await axios.post(`${apiBaseUrl}/user/register-payment`, { userId: this.professor.id });
+        
+        if (response.data.success) {
+          alert("Pagamento realizado com sucesso!");
+          this.professor.status = "liberado";
+          localStorage.setItem("user", JSON.stringify(this.professor));
+          this.modalPagamento = false;
+        } else {
+          alert("Erro ao registrar pagamento: " + response.data.message);
+        }
+      } catch (error) {
+        console.error("Erro na requisição:", error);
+        alert("Falha ao processar o pagamento.");
+      }
+    }
+  }
 };
 </script>
 
