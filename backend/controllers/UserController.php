@@ -248,4 +248,38 @@ class UserController extends Controller
             return ['success' => false, 'message' => 'Erro ao salvar no banco de dados'];
         }
     }
+
+    public function actionRegisterPayment()
+    {
+        Yii::$app->response->format = Response::FORMAT_JSON;
+        $request = Yii::$app->request->post();
+        $userId = $request['userId'] ?? null;
+
+        if (!$userId) {
+            return ['success' => false, 'message' => 'ID do usuário não fornecido.'];
+        }
+
+        $user = User::findOne($userId);
+        if (!$user) {
+            return ['success' => false, 'message' => 'Usuário não encontrado.'];
+        }
+
+        $hoje = new \DateTime();
+        $expiracao = $user->access_expiration ? new \DateTime($user->access_expiration) : null;
+        
+        if ($expiracao && $expiracao < $hoje) {
+            // Caso o pagamento esteja vencido, bloquear usuário antes de registrar o novo pagamento
+            $user->status = 0;
+        }
+        
+        // Atualizar a data de expiração para 30 dias a partir de hoje
+        $user->status = 1;
+        $user->access_expiration = date('Y-m-d H:i:s', strtotime('+30 days'));
+        
+        if ($user->save()) {
+            return ['success' => true, 'message' => 'Pagamento registrado com sucesso!'];
+        } else {
+            return ['success' => false, 'message' => 'Erro ao registrar pagamento.'];
+        }
+    }
 }
