@@ -1,179 +1,162 @@
 <template>
-    <v-container class="fill-height">
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="6" lg="4" class="mb-4">
-          <v-card class="pa-5 rounded-xl shadow-card">
-            <v-card-title class="text-center text-h4 mb-6">
-              Cadastro de Rotinas de Treinos
-            </v-card-title>
-  
-            <v-divider></v-divider>
-  
-            <v-form @submit.prevent="adicionarTreino" class="mt-4">
-              <v-row>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="novoTreino.nome"
-                    label="Nome do Treino"
-                    required
-                    outlined
-                    dense
-                  ></v-text-field>
-                </v-col>
-  
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="novoTreino.series"
-                    label="Número de Séries"
-                    type="number"
-                    required
-                    outlined
-                    dense
-                  ></v-text-field>
-                </v-col>
-  
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="novoTreino.repeticoes"
-                    label="Número de Repetições"
-                    type="number"
-                    required
-                    outlined
-                    dense
-                  ></v-text-field>
-                </v-col>
-  
-                <v-col cols="12">
-                  <v-btn type="submit" block color="primary" class="rounded-lg">
-                    <v-icon left>add</v-icon> Adicionar Treino
-                  </v-btn>
-                </v-col>
-              </v-row>
-            </v-form>
-  
-            <v-divider class="my-4"></v-divider>
-  
-            <v-card-title class="text-center text-h5 mb-4">
-              Treinos Cadastrados
-            </v-card-title>
-  
-            <v-row v-if="treinos.length > 0">
-              <v-col cols="12" v-for="(treino, index) in treinos" :key="index" class="mb-4">
-                <v-row>
-                  <v-col cols="3" class="text-right">
-                    <v-icon color="primary">fitness_center</v-icon>
-                  </v-col>
-                  <v-col cols="9">
-                    <p><strong>{{ treino.nome }}:</strong> {{ treino.series }} séries de {{ treino.repeticoes }} repetições</p>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-  
-            <v-row v-else>
-              <v-col cols="12" class="text-center">
-                <p>Nenhum treino cadastrado.</p>
-              </v-col>
-            </v-row>
-  
-            <v-divider></v-divider>
-  
-            <v-row class="mt-4" justify="center">
+  <v-container class="fill-height">
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6" lg="4" class="mb-4">
+        <v-card class="pa-5 rounded-xl shadow-card">
+          <v-card-title class="text-center text-h4 mb-6">
+            Gerenciar Treinos dos Alunos
+          </v-card-title>
+
+          <v-divider></v-divider>
+
+          <!-- Select v2 para selecionar aluno -->
+          <v-row class="mt-4">
+            <v-col cols="12">
+              <v-autocomplete
+                v-model="alunoSelecionado"
+                :items="alunos"
+                item-value="id"
+                item-title="username"
+                label="Selecione um aluno"
+                dense
+                outlined
+              ></v-autocomplete>
+            </v-col>
+          </v-row>
+
+          <!-- Botão para abrir modal de gerenciamento -->
+          <v-row v-if="alunoSelecionado">
+            <v-col cols="12">
+              <v-btn block color="primary" class="rounded-lg" @click="abrirModalTreinos">
+                <v-icon left>edit</v-icon> Gerenciar Treino
+              </v-btn>
+            </v-col>
+          </v-row>
+
+          <v-divider class="my-4"></v-divider>
+
+          <v-row class="mt-4" justify="center">
+            <v-col cols="12">
+              <v-btn block color="primary" to="/home" class="rounded-lg btn-hover">
+                <v-icon left>home</v-icon> Home
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+
+    <!-- Modal para Gerenciar Treinos -->
+    <v-dialog v-model="modalTreinos" max-width="600px">
+      <v-card>
+        <v-card-title class="text-h5">
+          Gerenciar Treinos - {{ alunoSelecionado?.username || 'Selecionado' }}
+        </v-card-title>
+        <v-divider></v-divider>
+
+        <v-card-text>
+          <div v-for="(treinos, dia) in treinosSemana" :key="dia">
+            <v-subheader>{{ dia }}</v-subheader>
+            <v-row v-for="(treino, index) in treinos" :key="index">
               <v-col cols="12">
-                <v-btn block color="primary" to="/home" class="rounded-lg btn-hover">
-                  <v-icon left>home</v-icon> Home
-                </v-btn>
+                <v-text-field v-model="treino.nome" label="Nome do Exercício" dense outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="treino.series" label="Séries" type="number" dense outlined></v-text-field>
+              </v-col>
+              <v-col cols="6">
+                <v-text-field v-model="treino.repeticoes" label="Repetições" type="number" dense outlined></v-text-field>
               </v-col>
             </v-row>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        novoTreino: {
-          nome: '',
-          series: null,
-          repeticoes: null,
-        },
-        treinos: [],
-      };
-    },
-    methods: {
-      adicionarTreino() {
-        if (this.novoTreino.nome && this.novoTreino.series && this.novoTreino.repeticoes) {
-          this.treinos.push({ ...this.novoTreino });
-          this.novoTreino = { nome: '', series: null, repeticoes: null };
-        } else {
-          alert('Por favor, preencha todos os campos.');
-        }
+          </div>
+        </v-card-text>
+
+        <v-divider></v-divider>
+        
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" text @click="modalTreinos = false">Cancelar</v-btn>
+          <v-btn color="green darken-1" text @click="salvarTreinos">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-container>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      alunos: [],
+      alunoSelecionado: null,
+      treinosSemana: {
+        Segunda: [{ nome: "", series: 1, repeticoes: 1 }],
+        Terça: [{ nome: "", series: 1, repeticoes: 1 }],
+        Quarta: [{ nome: "", series: 1, repeticoes: 1 }],
+        Quinta: [{ nome: "", series: 1, repeticoes: 1 }],
+        Sexta: [{ nome: "", series: 1, repeticoes: 1 }],
+        Sábado: [{ nome: "", series: 1, repeticoes: 1 }],
+        Domingo: [{ nome: "", series: 1, repeticoes: 1 }]
       },
+      modalTreinos: false,
+    };
+  },
+  mounted() {
+    this.carregarAlunos();
+  },
+  methods: {
+    async carregarAlunos() {
+      try {
+        const response = await axios.get("http://localhost:8000/user/get-users");
+        this.alunos = response.data.filter(user => user.role.toLowerCase() === "aluno");
+      } catch (error) {
+        console.error("Erro ao buscar alunos:", error);
+      }
     },
-  };
-  </script>
-  
-  <style scoped>
-  .v-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background: linear-gradient(to right, #eef2f3, #d9e2ec);
-    padding-right: 600px;
+    abrirModalTreinos() {
+      this.modalTreinos = true;
+    },
+    async salvarTreinos() {
+      try {
+        const response = await axios.post("http://localhost:8000/training/save", {
+          userId: this.alunoSelecionado.id,
+          treinos: this.treinosSemana
+        });
+
+        if (response.data.success) {
+          alert("Treinos salvos com sucesso!");
+          this.modalTreinos = false;
+        } else {
+          alert("Erro ao salvar os treinos.");
+        }
+      } catch (error) {
+        console.error("Erro ao salvar treinos:", error);
+      }
+    }
   }
-  
-  .shadow-card {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 16px;
-    width: 500px;
-  }
-  
-  .v-btn {
-    font-weight: bold;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: transform 0.3s ease-in-out;
-    padding: 16px 0;
-    font-size: 16px;
-  }
-  
-  .v-btn:hover {
-    transform: scale(1.05);
-    filter: brightness(1.2);
-  }
-  
-  .v-card {
-    background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    width: 800px;
-  }
-  
-  .v-card-title {
-    color: #424242;
-    text-align: center;
-    padding-right: 15px;
-  }
-  
-  .v-divider {
-    margin: 16px 0;
-  }
-  
-  .material-icons {
-    font-size: 28px;
-    margin-right: 10px;
-  }
-  
-  .text-wrap {
-    white-space: normal;
-    word-break: break-word;
-    text-align: center;
-  }
-  
-  .btn-hover {
-    transition: all 0.3s ease-in-out;
-  }
-  </style>
+};
+</script>
+
+<style scoped>
+.shadow-card {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  width: 500px;
+}
+
+.v-btn {
+  font-weight: bold;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: transform 0.3s ease-in-out;
+  padding: 16px 0;
+  font-size: 16px;
+}
+
+.v-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.2);
+}
+</style>

@@ -1,84 +1,91 @@
 <template>
-    <v-container class="fill-height">
-      <v-row justify="center">
-        <v-col cols="12" sm="8" md="6" lg="4" class="mb-4">
-          <v-card class="pa-5 rounded-xl shadow-card">
-            <v-card-title class="text-center text-h4 mb-6">
-              Rotina de Treinos do Aluno
-            </v-card-title>
-  
-            <v-divider></v-divider>
-  
-            <v-row class="mt-4" justify="center">
+  <v-container class="fill-height">
+    <v-row justify="center">
+      <v-col cols="12" sm="8" md="6" lg="4" class="mb-4">
+        <v-card class="pa-5 rounded-xl shadow-card">
+          <v-card-title class="text-center text-h4 mb-6">
+            Rotina de Treinos do Aluno
+          </v-card-title>
+
+          <v-divider></v-divider>
+
+          <v-row class="mt-4" justify="center">
+            <template v-for="(treinos, dia) in rotinaTreinos" :key="dia">
               <v-col cols="12" class="mb-4">
                 <v-row>
-                  <v-col cols="3" class="text-right">
-                    <v-icon color="primary">fitness_center</v-icon>
+                  <v-col cols="12">
+                    <p class="text-h6 font-weight-bold">{{ dia.charAt(0).toUpperCase() + dia.slice(1) }}</p>
                   </v-col>
-                  <v-col cols="9">
-                    <p><strong>Treino 1:</strong> Agachamento - 4 séries de 12 repetições</p>
+                </v-row>
+                <v-row v-if="treinos.length > 0">
+                  <v-col v-for="(treino, index) in treinos" :key="index" cols="12">
+                    <v-row>
+                      <v-col cols="3" class="text-right">
+                        <v-icon color="primary">fitness_center</v-icon>
+                      </v-col>
+                      <v-col cols="9">
+                        <p><strong>{{ treino.nome }}</strong> - {{ treino.series }} séries de {{ treino.repeticoes }} repetições</p>
+                      </v-col>
+                    </v-row>
+                  </v-col>
+                </v-row>
+                <v-row v-else>
+                  <v-col cols="12">
+                    <p class="text-muted">Nenhum treino cadastrado.</p>
                   </v-col>
                 </v-row>
               </v-col>
-  
-              <v-col cols="12" class="mb-4">
-                <v-row>
-                  <v-col cols="3" class="text-right">
-                    <v-icon color="primary">fitness_center</v-icon>
-                  </v-col>
-                  <v-col cols="9">
-                    <p><strong>Treino 2:</strong> Supino reto - 4 séries de 10 repetições</p>
-                  </v-col>
-                </v-row>
-              </v-col>
-  
-              <v-col cols="12" class="mb-4">
-                <v-row>
-                  <v-col cols="3" class="text-right">
-                    <v-icon color="primary">fitness_center</v-icon>
-                  </v-col>
-                  <v-col cols="9">
-                    <p><strong>Treino 3:</strong> Remada unilateral - 3 séries de 12 repetições</p>
-                  </v-col>
-                </v-row>
-              </v-col>
-  
-              <v-col cols="12" class="mb-4">
-                <v-row>
-                  <v-col cols="3" class="text-right">
-                    <v-icon color="primary">fitness_center</v-icon>
-                  </v-col>
-                  <v-col cols="9">
-                    <p><strong>Treino 4:</strong> Desenvolvimento militar - 4 séries de 10 repetições</p>
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-  
-            <v-divider></v-divider>
-  
-            <v-row class="mt-4" justify="center">
-              <v-col cols="12">
-                <v-btn block color="primary" to="/home" class="rounded-lg btn-hover">
-                  <v-icon left>home</v-icon> Home
-                </v-btn>
-              </v-col>
-            </v-row>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-container>
-  </template>
-  
-  <script>
-  export default {
-    data() {
-      return {
-        // adicionar as rotinas depois
-      };
+            </template>
+          </v-row>
+
+          <v-divider></v-divider>
+
+          <v-row class="mt-4" justify="center">
+            <v-col cols="12">
+              <v-btn block color="primary" to="/home" class="rounded-lg btn-hover">
+                <v-icon left>home</v-icon> Home
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+    </v-row>
+  </v-container>
+</template>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      userId: 3, // Troque para pegar o ID real do aluno autenticado
+      rotinaTreinos: {
+        segunda: [],
+        terca: [],
+        quarta: [],
+        quinta: [],
+        sexta: [],
+        sabado: [],
+        domingo: []
+      }
+    };
+  },
+  mounted() {
+    this.carregarTreinos();
+  },
+  methods: {
+    async carregarTreinos() {
+      try {
+        const response = await axios.get(`http://localhost:8000/treinos/get-trainig/${this.userId}`);
+        this.rotinaTreinos = response.data.treinos || this.rotinaTreinos;
+      } catch (error) {
+        console.error("Erro ao buscar treinos:", error);
+      }
     },
-  };
-  </script>
+  }
+};
+</script>
   
   <style scoped>
   .v-container {
