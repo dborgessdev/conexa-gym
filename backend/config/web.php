@@ -15,6 +15,12 @@ $config = [
         'response' => [
             'format' => \yii\web\Response::FORMAT_JSON,
             'charset' => 'UTF-8',
+            'on beforeSend' => function ($event) {
+                $response = $event->sender;
+                $response->headers->set('Access-Control-Allow-Origin', '*');
+                $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+                $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+            },
         ],
         'request' => [
             'cookieValidationKey' => '39tJN3A-neU4n0sa9mvr9rEpj_Bh1ZgU',

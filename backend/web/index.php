@@ -21,7 +21,12 @@ if ($requestUri === '/user/get-users') {
 } elseif ($requestUri === '/user/temporary-access') {
     $_GET['r'] = 'user/temporary-access';
 } elseif ($requestUri === '/user/register-payment' && $requestMethod === 'POST') {
-    $_GET['r'] = 'user/register-payment'; // Nova rota para registrar pagamento
+    $_GET['r'] = 'user/register-payment';
+} elseif ($requestUri === '/training/save' && $requestMethod === 'POST') {
+    $_GET['r'] = 'training/save';
+} elseif (strpos($requestUri, '/training/get/') === 0) {
+    $_GET['r'] = 'training/get';
+    $_GET['userId'] = str_replace('/training/get/', '', $requestUri);
 }
 
 // Inicializa o Yii
